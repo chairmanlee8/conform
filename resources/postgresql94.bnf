@@ -1,21 +1,60 @@
+(* General Syntax Structure *)
+
 statements = (statement | <ws>)*
 statement = createTable
 
+(* Whitespace Shortcuts *)
+
 ws = #'\s+'
 wso = #'\s*'
+wslb = #'[\s\r\n]+'
+
+(* Identifiers, constants, keywords *)
+
 identifier = #'[a-zA-Z_][a-zA-Z_0-9$]*'
 (* TODO: quoted identifiers *)
 constant = #'[0-9]+(\.[0-9]+)?' | #'\'[^\']*\'' | 'NULL'
 
+(* Data Types *)
+
+dataType = smallInt | integer | bigInt | decimal | numeric | precisionScale | real | doublePrecision | serial |
+    bigSerial | money | varchar | char | text | bytea | boolean | arrayType
+
+arrayType = dataType <wso> <arraySpec>
+arraySpec = brackets | <'ARRAY'> (<wso> brackets)?
+brackets = <'['> <wso> <#'[0-9]*'> <wso> <']'>
+
+smallInt = <'SMALLINT'>
+integer = <'INTEGER'> | <'INT'>
+bigInt = <'BIGINT'>
+decimal = <'DECIMAL'> <wso> precisionScale?
+numeric = <'NUMERIC'> <wso> precisionScale?
+precisionScale = <'('> <wso> constant (<wso> <','> <wso> constant)? <wso> <')'>
+real = <'REAL'>
+doublePrecision = <'DOUBLE'> <ws> <'PRECISION'>
+serial = <'SERIAL'>
+bigSerial = <'BIGSERIAL'>
+money = <'MONEY'>
+varchar = <'VARCHAR'> lenSpec | <'CHARACTER'> <ws> <'VARYING'> lenSpec
+char = <'CHAR'> lenSpec | <'CHARACTER'> lenSpec
+lenSpec = <'('> <wso> constant <wso> <')'>
+text = <'TEXT'>
+bytea = <'BYTEA'>
+(* TODO: date/time types *)
+boolean = <'BOOLEAN'>
+(* TODO: more types *)
+
+(* Statements *)
+
 createTable = <'CREATE'> <ws> <'TABLE'> <ws> identifier <wso> <'('> columns <')'> <';'?>
 
-columns = column ',' columns | column
-column = 
+columns = (<wso> column <wslb?> <','>)* <wso> column <wslb?>
+column = identifier <ws> dataType (<ws> constraint)*
 
 constraint = notNull | null | default | unique | primaryKey (* | references *)
 
-notNull = 'NOT' <ws> 'NULL'
-null = 'NULL'
-default = 'DEFAULT' <ws> constant
-unique = 'UNIQUE'
-primaryKey = 'PRIMARY' <ws> 'KEY'
+notNull = <'NOT'> <ws> <'NULL'>
+null = <'NULL'>
+default = <'DEFAULT'> <ws> constant
+unique = <'UNIQUE'>
+primaryKey = <'PRIMARY'> <ws> <'KEY'>

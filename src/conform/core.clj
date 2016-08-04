@@ -1,5 +1,6 @@
 (ns conform.core
   (:require [instaparse.core :as insta])
+  (:require clojure.pprint)
   (:gen-class))
 
 (def parser
@@ -8,4 +9,4 @@
 (defn -main
   "I don't do a whole lot."
   []
-  (println (parser (slurp "SAMPLE.sql"))))
+  (clojure.pprint/pprint (parser (slurp "SAMPLE.sql"))))
