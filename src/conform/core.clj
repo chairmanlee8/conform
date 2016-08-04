@@ -3,7 +3,7 @@
   (:gen-class))
 
 (def parser
-  (insta/parser (clojure.java.io/resource "postgresql94.bnf")))
+  (insta/parser (clojure.java.io/resource "postgresql94.bnf") :string-ci true))
 
 (defn -main
   "I don't do a whole lot."

@@ -5,5 +5,17 @@ ws = #'\s+'
 wso = #'\s*'
 identifier = #'[a-zA-Z_][a-zA-Z_0-9$]*'
 (* TODO: quoted identifiers *)
+constant = #'[0-9]+(\.[0-9]+)?' | #'\'[^\']*\'' | 'NULL'
 
-createTable = 'CREATE' <ws> 'TABLE' <ws> <identifier> <wso> '(' ')' ';'?
+createTable = <'CREATE'> <ws> <'TABLE'> <ws> identifier <wso> <'('> columns <')'> <';'?>
+
+columns = column ',' columns | column
+column = 
+
+constraint = notNull | null | default | unique | primaryKey (* | references *)
+
+notNull = 'NOT' <ws> 'NULL'
+null = 'NULL'
+default = 'DEFAULT' <ws> constant
+unique = 'UNIQUE'
+primaryKey = 'PRIMARY' <ws> 'KEY'
